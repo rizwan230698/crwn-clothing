@@ -4,6 +4,8 @@ import CustomButton from "../custom-button/CustomButton.component";
 
 import { auth, createUserProfileDocument } from "../../firebase/firebase.utils";
 
+import Spinner from "../../spinner/Spinner";
+
 import "./SignUp.style.scss";
 
 class SignUp extends React.Component {
@@ -14,7 +16,8 @@ class SignUp extends React.Component {
       displayName: "",
       email: "",
       password: "",
-      confirmPassword: ""
+      confirmPassword: "",
+      spinner: false
     };
   }
   handleChange = event => {
@@ -23,38 +26,47 @@ class SignUp extends React.Component {
   };
   handleSubmit = async event => {
     event.preventDefault();
+    this.setState({ spinner: true }, async () => {
+      const { displayName, email, password, confirmPassword } = this.state;
 
-    const { displayName, email, password, confirmPassword } = this.state;
+      if (password !== confirmPassword) {
+        alert("passwords don't match");
+        return;
+      }
 
-    if (password !== confirmPassword) {
-      alert("passwords don't match");
-      return;
-    }
+      try {
+        const { user } = await auth.createUserWithEmailAndPassword(
+          email,
+          password
+        );
 
-    try {
-      const { user } = await auth.createUserWithEmailAndPassword(
-        email,
-        password
-      );
+        await createUserProfileDocument({ ...user, displayName });
 
-      await createUserProfileDocument({ ...user, displayName });
-
-      this.setState({
-        displayName: "",
-        email: "",
-        password: "",
-        confirmPassword: ""
-      });
-    } catch (error) {
-      console.error(error);
-    }
+        this.setState({
+          displayName: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          spinner: false
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    });
   };
   render() {
+    const element = this.state.spinner ? (
+      <Spinner className="signing-up" text="Signing up..." />
+    ) : (
+      <div></div>
+    );
+
     const { displayName, email, password, confirmPassword } = this.state;
     return (
       <div className="sign-up">
         <h2 className="title">I do not have a account</h2>
         <span>Sign up with your email and password</span>
+
         <form className="sign-up-form" onSubmit={this.handleSubmit}>
           <FormInput
             name="displayName"
@@ -87,6 +99,7 @@ class SignUp extends React.Component {
           />
           <CustomButton type="submit">SIGN UP</CustomButton>
         </form>
+        {element}
       </div>
     );
   }

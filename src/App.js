@@ -35,7 +35,7 @@ class App extends React.Component {
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
       if (userAuth) {
         await createUserProfileDocument(userAuth);
-        setTimeout(() => this.setCurrentUser(userAuth), 700);
+        setTimeout(() => this.setCurrentUser(userAuth), 1000);
       } else {
         this.setState({ currentUser: userAuth });
       }
