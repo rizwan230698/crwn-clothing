@@ -1,6 +1,8 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
 import axios from "axios";
+import { connect } from "react-redux";
+import { setCurrentUser } from "./redux/user/user.action";
 import "./App.css";
 import Homepage from "./pages/homepage/HomePage.component";
 import ShopPage from "./pages/shop/Shop.component";
@@ -9,25 +11,13 @@ import Header from "./components/header/Header.component";
 import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      currentUser: null
-    };
-  }
-
   unsubscribeFromAuth = null;
 
-  setCurrentUser = async user => {
+  setUser = async user => {
     const { uid } = user;
     const response = await axios.get(`http://localhost:8080/user/${uid}`);
     if (response.data.exist) {
-      this.setState({
-        currentUser: {
-          ...response.data
-        }
-      });
+      this.props.setCurrentUser(response.data);
     }
   };
 
@@ -35,9 +25,9 @@ class App extends React.Component {
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
       if (userAuth) {
         await createUserProfileDocument(userAuth);
-        setTimeout(() => this.setCurrentUser(userAuth), 1000);
+        setTimeout(() => this.setUser(userAuth), 1000);
       } else {
-        this.setState({ currentUser: userAuth });
+        this.props.setCurrentUser(userAuth);
       }
     });
   }
@@ -47,7 +37,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <Header currentUser={this.state.currentUser} />
+        <Header />
         <Switch>
           <Route exact path="/" component={Homepage} />
           <Route path="/shop" component={ShopPage} />
@@ -58,7 +48,11 @@ class App extends React.Component {
   }
 }
 
-export default App;
+const mapDispatchToProps = dispatch => ({
+  setCurrentUser: user => dispatch(setCurrentUser(user))
+});
+
+export default connect(null, mapDispatchToProps)(App);
 
 /*
 ****************************Firebase Sign in with Google and Backend*****************
