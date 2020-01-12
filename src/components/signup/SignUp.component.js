@@ -24,16 +24,15 @@ class SignUp extends React.Component {
     const { name, value } = event.target;
     this.setState({ [name]: value });
   };
-  handleSubmit = async event => {
+  handleSubmit = event => {
     event.preventDefault();
+    const { displayName, email, password, confirmPassword } = this.state;
+
+    if (password !== confirmPassword) {
+      alert("passwords don't match");
+      return;
+    }
     this.setState({ spinner: true }, async () => {
-      const { displayName, email, password, confirmPassword } = this.state;
-
-      if (password !== confirmPassword) {
-        alert("passwords don't match");
-        return;
-      }
-
       try {
         const { user } = await auth.createUserWithEmailAndPassword(
           email,
@@ -50,7 +49,10 @@ class SignUp extends React.Component {
           spinner: false
         });
       } catch (error) {
-        console.error(error);
+        this.setState({ spinner: false }, () => {
+          console.error(error.message);
+          alert(error.message);
+        });
       }
     });
   };

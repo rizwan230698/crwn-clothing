@@ -5,31 +5,45 @@ import CustomButton from "../custom-button/CustomButton.component";
 import { signInWithGoogle } from "../../firebase/firebase.utils";
 import { auth } from "../../firebase/firebase.utils";
 
+import Spinner from "../../spinner/Spinner";
+
 class SignIn extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       email: "",
-      password: ""
+      password: "",
+      spinner: false
     };
   }
 
-  handleSubmit = async event => {
+  handleSubmit = event => {
     event.preventDefault();
     const { email, password } = this.state;
 
-    try {
-      await auth.signInWithEmailAndPassword(email, password);
-      this.setState({ email: "", password: "" });
-    } catch (error) {
-      console.log(error.message);
-    }
+    this.setState({ spinner: true }, async () => {
+      try {
+        await auth.signInWithEmailAndPassword(email, password);
+        this.setState({ email: "", password: "", spinner: false });
+      } catch (error) {
+        this.setState({ spinner: false }, () => {
+          console.log(error.message);
+          alert(error.message);
+        });
+      }
+    });
   };
   handleChange = event => {
     const { name, value } = event.target;
     this.setState({ [name]: value });
   };
   render() {
+    const { spinner } = this.state;
+    const element = spinner ? (
+      <Spinner className="signing-in" text="Signing In..." />
+    ) : (
+      <div></div>
+    );
     return (
       <div className="sign-in">
         <h2 className="title">I already have an account</h2>
@@ -62,6 +76,7 @@ class SignIn extends React.Component {
             </CustomButton>
           </div>
         </form>
+        {element}
       </div>
     );
   }

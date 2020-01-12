@@ -1,5 +1,5 @@
 .wrapper {
-  border-radius: 4px;
+  border-radius: 0;
   background-color: black;
   transform: translate(-50%, -50%);
   display: flex;
@@ -12,13 +12,20 @@
 
   &.signing-up {
     position: absolute;
-    left: 65%;
-    top: 60%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-55%, -50%);
+  }
+  &.signing-in {
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -30%);
   }
 
   .loading-spinner {
-    width: 5rem;
-    height: 5rem;
+    width: 2.5rem;
+    height: 2.5rem;
     border: 3px solid rgba(225, 225, 225, 0.1);
     border-radius: 50%;
     border-top-color: #fff;
