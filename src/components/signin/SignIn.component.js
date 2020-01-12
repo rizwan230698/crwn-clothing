@@ -41,9 +41,7 @@ class SignIn extends React.Component {
     const { spinner } = this.state;
     const element = spinner ? (
       <Spinner className="signing-in" text="Signing In..." />
-    ) : (
-      <div></div>
-    );
+    ) : null;
     return (
       <div className="sign-in">
         <h2 className="title">I already have an account</h2>

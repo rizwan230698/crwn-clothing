@@ -59,9 +59,7 @@ class SignUp extends React.Component {
   render() {
     const element = this.state.spinner ? (
       <Spinner className="signing-up" text="Signing up..." />
-    ) : (
-      <div></div>
-    );
+    ) : null;
 
     const { displayName, email, password, confirmPassword } = this.state;
     return (
