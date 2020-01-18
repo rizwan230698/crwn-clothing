@@ -20,7 +20,9 @@ class App extends React.Component {
 
   setUser = async user => {
     const { uid } = user;
-    const response = await axios.get(`http://localhost:8080/user/${uid}`);
+    const response = await axios.get(
+      `https://crwn-apis.herokuapp.com/user/${uid}`
+    );
     if (response.data.exist) {
       this.props.setCurrentUser(response.data);
     }

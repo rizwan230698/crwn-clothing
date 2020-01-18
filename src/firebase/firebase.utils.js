@@ -18,14 +18,16 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
   if (!userAuth || !userAuth.displayName) return;
 
   const { uid } = userAuth;
-  const response = await axios.get(`http://localhost:8080/user/${uid}`);
+  const response = await axios.get(
+    `https://crwn-apis.herokuapp.com/user/${uid}`
+  );
 
   if (!response.data.exist) {
     const { displayName, email, uid } = userAuth;
     const createdAt = new Date();
 
     try {
-      await axios.post("http://localhost:8080/user", {
+      await axios.post("https://crwn-apis.herokuapp.com/user", {
         displayName,
         email,
         uid,
