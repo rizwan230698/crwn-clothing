@@ -1,8 +1,8 @@
-import hat from "../../images/hats.png";
-import jacket from "../../images/jackets.png";
-import sneaker from "../../images/sneakers.png";
-import women from "../../images/womens.png";
-import men from "../../images/men.png";
+import hat from "../../assests/images/hats.png";
+import jacket from "../../assests/images/jackets.png";
+import sneaker from "../../assests/images/sneakers.png";
+import women from "../../assests/images/womens.png";
+import men from "../../assests/images/men.png";
 
 const INITAIL_STATE = {
   sections: [
