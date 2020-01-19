@@ -25,6 +25,13 @@ class App extends React.Component {
     );
     if (response.data.exist) {
       this.props.setCurrentUser(response.data);
+    } else {
+      const response = await axios.get(
+        `https://crwn-apis.herokuapp.com/user/${uid}`
+      );
+      if (response.data.exist) {
+        this.props.setCurrentUser(response.data);
+      }
     }
   };
 
