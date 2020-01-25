@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import axios from "axios";
 import { connect } from "react-redux";
@@ -15,63 +15,56 @@ import Header from "./components/header/Header.component";
 import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
 import { selectCurrentUser } from "./redux/user/user.selectors";
 
-class App extends React.Component {
-  unsubscribeFromAuth = null;
-
-  setUser = async user => {
+const App = ({ currentUser, setCurrentUser }) => {
+  const setUser = async user => {
     const { uid } = user;
     const response = await axios.get(
       `https://crwn-apis.herokuapp.com/user/${uid}`
     );
     if (response.data.exist) {
-      this.props.setCurrentUser(response.data);
+      setCurrentUser(response.data);
     } else {
       const response = await axios.get(
         `https://crwn-apis.herokuapp.com/user/${uid}`
       );
       if (response.data.exist) {
-        this.props.setCurrentUser(response.data);
+        setCurrentUser(response.data);
       }
     }
   };
 
-  componentDidMount() {
-    this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
+  useEffect(() => {
+    const unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
       if (userAuth) {
         await createUserProfileDocument(userAuth);
-        setTimeout(() => this.setUser(userAuth), 1500);
+        setTimeout(() => setUser(userAuth), 1500);
       } else {
-        this.props.setCurrentUser(userAuth);
+        setCurrentUser(userAuth);
       }
     });
-  }
-  componentWillUnmount() {
-    this.unsubscribeFromAuth();
-  }
-  render() {
-    return (
-      <div>
-        <Header />
-        <Switch>
-          <Route exact path="/" component={Homepage} />
-          <Route path="/shop" component={ShopPage} />
-          <Route exact path="/checkout" component={Checkout} />
-          <Route
-            exact
-            path="/signin"
-            render={() =>
-              this.props.currentUser ? (
-                <Redirect to="/" />
-              ) : (
-                <SignInAndSignUpPage />
-              )
-            }
-          />
-        </Switch>
-      </div>
-    );
-  }
-}
+    return () => {
+      unsubscribeFromAuth();
+    };
+  }, [setCurrentUser]);
+
+  return (
+    <div>
+      <Header />
+      <Switch>
+        <Route exact path="/" component={Homepage} />
+        <Route path="/shop" component={ShopPage} />
+        <Route exact path="/checkout" component={Checkout} />
+        <Route
+          exact
+          path="/signin"
+          render={() =>
+            currentUser ? <Redirect to="/" /> : <SignInAndSignUpPage />
+          }
+        />
+      </Switch>
+    </div>
+  );
+};
 
 const mapStateToProps = createStructuredSelector({
   currentUser: selectCurrentUser
