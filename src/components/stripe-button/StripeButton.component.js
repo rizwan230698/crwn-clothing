@@ -1,13 +1,24 @@
 import React from "react";
 import StripeCheckout from "react-stripe-checkout";
+import axios from "axios";
 
 const StripeCheckoutButton = ({ price }) => {
   const priceForStripe = price * 100; //dollars to cents
   const publishableKey = "pk_test_dqFOxPjiAaU87aaK3xk282yW00Mhsxc8iv";
-
-  const onToken = token => {
-    console.log(token);
-    alert("Payment Successful");
+  const amount = Math.round(price * 71.24) * 100;
+  const onToken = async token => {
+    try {
+      await axios.post("https://crwn-apis.herokuapp.com/payment", {
+        amount,
+        token
+      });
+      alert("Payment Successful");
+    } catch (error) {
+      console.log("payment error", error);
+      alert(
+        "There was an issue with your payment. Please make sure you use the provided credit card"
+      );
+    }
   };
 
   return (
