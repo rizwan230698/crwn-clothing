@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 
 import { setCurrentUser } from "./redux/user/user.action";
-import "./App.css";
+
 import Homepage from "./pages/homepage/HomePage.component";
 import ShopPage from "./pages/shop/Shop.component";
 import SignInAndSignUpPage from "./pages/signin-and-signup-page/Signin-And-Signup.component";
@@ -14,6 +14,8 @@ import Checkout from "./pages/checkout/Checkout.component";
 import Header from "./components/header/Header.component";
 import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
 import { selectCurrentUser } from "./redux/user/user.selectors";
+
+import { GlobalStyle } from "./global.style";
 
 const App = ({ currentUser, setCurrentUser }) => {
   const setUser = async user => {
@@ -49,6 +51,7 @@ const App = ({ currentUser, setCurrentUser }) => {
 
   return (
     <div>
+      <GlobalStyle />
       <Header />
       <Switch>
         <Route exact path="/" component={Homepage} />
